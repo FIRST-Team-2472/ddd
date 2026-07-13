@@ -21,7 +21,7 @@ public class LimelightCMD extends Command {
         readTelemetry();
     }
 
-    public void readTX() {
+    public void readTelemetry() {
         double tx = table.getEntry("tx").getDouble(0.0);
         double ty = table.getEntry("ty").getDouble(0.0);
         double ta = table.getEntry("ta").getDouble(0.0);
