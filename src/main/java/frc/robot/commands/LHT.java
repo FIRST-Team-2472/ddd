@@ -1,20 +1,32 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.LimelightHelpers;
 
 public class LHT {
-    public void eVC() {
-        boolean targetVisible = LimelightHelpers.getTV("limelight");
-        double tx = LimelightHelpers.getTX("limelight");
-        double ty = LimelightHelpers.getTY("limelight");
 
-        if (targetVisible) {
-            SmartDashboard.putBoolean("Target Found!", true);
-            SmartDashboard.putNumber("Degrees offset: ", tx);
-            SmartDashboard.putNumber("Vertical offset: ", ty);
-        } else {
-            SmartDashboard.putBoolean("Searching for target...", false);
-        }
+    public void executeVisionCheck() {
+    
+    boolean targetExist = LimelightHelpers.getTV("limelight");
+    double xOffset = LimelightHelpers.getTX("limelight");
+    double yOffset = LimelightHelpers.getTY("limelight");
+
+
+    if (targetExist) {
+        System.out.println("target x locked at " + xOffset + " degrees");
+        System.out.println("target y locked at " + yOffset + " degrees");
+    } else {
+
+        System.out.println("target not locked");
+    }}
+
+    public void setPiplineperAlliance(boolean isRedAlliance) {
+       if(isRedAlliance) {
+        LimelightHelpers.setPipelineIndex("limelight", 2);
+       } else {
+        LimelightHelpers.setPipelineIndex("limelight", 3);
+       }
     }
 }
+
+
+
