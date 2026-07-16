@@ -18,6 +18,9 @@ public class AimBot extends Command {
 
       private double targetOffset;
 
+      // KP is constant but im too lazy to make a constants file just for this
+      private double kP = 0.03;
+
       private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
             .withSteerRequestType(SteerRequestType.Position);
 
@@ -35,10 +38,10 @@ public class AimBot extends Command {
             targetOffset = LimelightHelpers.getTX("limelight");
             if (targetOffset > 1) {
                   drivetrain.applyRequest(() ->
-                        m_driveRequest.withRotationalRate(-0.2 * MaxAngularRate));
+                        m_driveRequest.withRotationalRate(Math.max(-kP * targetOffset, -0.5)));
             } else if (targetOffset < -1) {
                   drivetrain.applyRequest(() ->
-                        m_driveRequest.withRotationalRate(0.2 * MaxAngularRate));
+                        m_driveRequest.withRotationalRate(Math.min(kP * targetOffset, 0.5)));
             }
       }
 
@@ -50,6 +53,6 @@ public class AimBot extends Command {
       @Override
       public void end(boolean parameter) {
             drivetrain.applyRequest(() ->
-            m_driveRequest.withRotationalRate(0));
+                  m_driveRequest.withRotationalRate(0));
       }
 }
