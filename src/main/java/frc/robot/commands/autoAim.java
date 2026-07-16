@@ -13,7 +13,7 @@ import frc.robot.generated.LimelightHelpers;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-public class autoAim extends Command{
+public class AutoAim extends Command{
 
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
@@ -22,15 +22,16 @@ public class autoAim extends Command{
     private CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     double xOffset;
-    public autoAim(){
-
+    public AutoAim(CommandSwerveDrivetrain drivetrain){
+        this.drivetrain = drivetrain;
+        addRequirements(drivetrain);
     }
     
     public double getXOffset() {
         double targetXOffset;
         if (!Robot.isSimulation()){
 
-            targetXOffset = LimelightHelpers.getTX("limelight");
+            targetXOffset = LimelightHelpers.getTX("limelight-three");
         } else {
             targetXOffset = -15;
         }
