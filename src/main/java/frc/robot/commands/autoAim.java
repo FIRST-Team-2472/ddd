@@ -17,13 +17,11 @@ public class autoAim extends Command{
 
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
-    //Pose2d pose = new Pose2d(1, 1, new Rotation2d());
-
     private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
       .withSteerRequestType(SteerRequestType.Position);
     private CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-
+    double xOffset;
     public autoAim(){
 
     }
@@ -51,11 +49,11 @@ public class autoAim extends Command{
 
     @Override
     public void execute() {
-        
-        if (getXOffset() > 1) {
+        xOffset = getXOffset();
+        if (xOffset > 1) {
           drivetrain.applyRequest(() ->
          m_driveRequest.withRotationalRate(-0.2 * MaxAngularRate));  
-        } else if (getXOffset() < -1) {
+        } else if (xOffset < -1) {
         drivetrain.applyRequest(() ->
          m_driveRequest.withRotationalRate(0.2 * MaxAngularRate));
         }
@@ -63,11 +61,15 @@ public class autoAim extends Command{
 
     @Override
     public boolean isFinished() {
+        if (xOffset >= -1 && xOffset <= 1) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public void end(boolean parameter) {
-
-    }
+        drivetrain.applyRequest(() ->
+         m_driveRequest.withRotationalRate(0));
+        }
 }
