@@ -16,6 +16,8 @@ public class AimBot extends Command {
       private CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
       private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
+      private double targetOffset;
+
       private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
             .withSteerRequestType(SteerRequestType.Position);
 
@@ -30,7 +32,7 @@ public class AimBot extends Command {
 
       @Override
       public void execute() {
-            double targetOffset = LimelightHelpers.getTX("limelight");
+            targetOffset = LimelightHelpers.getTX("limelight");
             if (targetOffset > 1) {
                   drivetrain.applyRequest(() ->
                         m_driveRequest.withRotationalRate(-0.2 * MaxAngularRate));
@@ -42,6 +44,12 @@ public class AimBot extends Command {
 
       @Override
       public boolean isFinished() {
-            return false;
+            return -1 <= targetOffset && targetOffset <= 1;
+      }
+
+      @Override
+      public void end(boolean parameter) {
+            drivetrain.applyRequest(() ->
+            m_driveRequest.withRotationalRate(0));
       }
 }
