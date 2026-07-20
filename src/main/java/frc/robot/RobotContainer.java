@@ -52,7 +52,7 @@ public class RobotContainer {
             )
         );
         
-        joystick.povDown().onTrue(new AimBot());
+        joystick.povDown().onTrue(new AimBot(drivetrain));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.

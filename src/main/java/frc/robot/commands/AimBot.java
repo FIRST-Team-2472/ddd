@@ -12,7 +12,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AimBot extends Command {
 
-      private CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+      private CommandSwerveDrivetrain drivetrain;
       //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
       private double targetOffset;
@@ -24,7 +24,8 @@ public class AimBot extends Command {
       private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
             .withSteerRequestType(SteerRequestType.Position);
 
-      public AimBot() {
+      public AimBot(CommandSwerveDrivetrain drivetrain) {
+            this.drivetrain = drivetrain;
             addRequirements(drivetrain);
       }
 
