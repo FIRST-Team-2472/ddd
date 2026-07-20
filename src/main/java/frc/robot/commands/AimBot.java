@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.LimelightHelpers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -40,10 +42,12 @@ public class AimBot extends Command {
                   targetOffset = LimelightHelpers.getTX("limelight");
                   if (targetOffset > 1) {
                         drivetrain.setControl(
-                              m_driveRequest.withRotationalRate(Math.max(kP * targetOffset, -0.5)));
+                              m_driveRequest.withRotationalRate(-0.2));
+                              //Math.max(kP * targetOffset, -0.5)
                   } else if (targetOffset < -1) {
                         drivetrain.setControl(
-                              m_driveRequest.withRotationalRate(Math.min(kP * targetOffset, 0.5)));
+                              m_driveRequest.withRotationalRate(0.2));
+                              //Math.min(kP * targetOffset, 0.5)
                   }
             } else {
                   drivetrain.setControl(
