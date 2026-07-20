@@ -39,10 +39,10 @@ public class AimBot extends Command {
             if (targetVisible) {
                   targetOffset = LimelightHelpers.getTX("limelight");
                   if (targetOffset > 1) {
-                        drivetrain.applyRequest(() ->
+                        drivetrain.setControl(
                               m_driveRequest.withRotationalRate(Math.max(-kP * targetOffset, -0.5)));
                   } else if (targetOffset < -1) {
-                        drivetrain.applyRequest(() ->
+                        drivetrain.setControl(
                               m_driveRequest.withRotationalRate(Math.min(kP * targetOffset, 0.5)));
                   }
             }
