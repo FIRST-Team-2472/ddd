@@ -9,18 +9,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.LimelightHelpers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-//import static edu.wpi.first.units.Units.RadiansPerSecond;
-//import static edu.wpi.first.units.Units.RotationsPerSecond;;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;;
 
 public class AimBot extends Command {
 
       private CommandSwerveDrivetrain drivetrain;
-      //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+      private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
       private double targetOffset;
       private boolean targetVisible;
 
-      //private double kP = -0.03;
+      private double kP = -0.03;
 
       private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -45,13 +45,11 @@ public class AimBot extends Command {
                   if (targetOffset > 1) {
                         System.out.println("turning right");
                         drivetrain.setControl(
-                              m_driveRequest.withRotationalRate(-0.1));
-                              //Math.max(kP * targetOffset, -0.5)
+                              m_driveRequest.withRotationalRate(Math.max(kP * targetOffset * MaxAngularRate, -0.5)));
                   } else if (targetOffset < -1) {
                         System.out.println("turning left");
                         drivetrain.setControl(
-                              m_driveRequest.withRotationalRate(0.1));
-                              //Math.min(kP * targetOffset, 0.5)
+                              m_driveRequest.withRotationalRate(Math.min(kP * targetOffset * MaxAngularRate, 0.5)));
                   }
             } else {
                   drivetrain.setControl(
@@ -61,8 +59,7 @@ public class AimBot extends Command {
 
       @Override
       public boolean isFinished() {
-            return false;
-            //return targetVisible && -1 <= targetOffset && targetOffset <= 1;
+            return targetVisible && -1 <= targetOffset && targetOffset <= 1;
       }
 
       @Override
