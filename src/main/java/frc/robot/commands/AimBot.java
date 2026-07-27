@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,11 +20,10 @@ public class AimBot extends Command {
       private double targetOffset;
       private boolean targetVisible;
 
-      // kP is constant but I'm too lazy to make a constants file just for kP
-      private double kP = -0.03;
+      //private double kP = -0.03;
 
       private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
-            .withSteerRequestType(SteerRequestType.Position);
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
       public AimBot(CommandSwerveDrivetrain drivetrain) {
             this.drivetrain = drivetrain;
@@ -37,16 +37,20 @@ public class AimBot extends Command {
 
       @Override
       public void execute() {
-            targetVisible = LimelightHelpers.getTV("limelight");
+            System.out.println("Executed aimbot");
+            targetVisible = LimelightHelpers.getTV("limelight-three");
             if (targetVisible) {
-                  targetOffset = LimelightHelpers.getTX("limelight");
+                  System.out.println("target is visible");
+                  targetOffset = LimelightHelpers.getTX("limelight-three");
                   if (targetOffset > 1) {
+                        System.out.println("turning right");
                         drivetrain.setControl(
-                              m_driveRequest.withRotationalRate(-0.2));
+                              m_driveRequest.withRotationalRate(-0.1));
                               //Math.max(kP * targetOffset, -0.5)
                   } else if (targetOffset < -1) {
+                        System.out.println("turning left");
                         drivetrain.setControl(
-                              m_driveRequest.withRotationalRate(0.2));
+                              m_driveRequest.withRotationalRate(0.1));
                               //Math.min(kP * targetOffset, 0.5)
                   }
             } else {
@@ -57,7 +61,8 @@ public class AimBot extends Command {
 
       @Override
       public boolean isFinished() {
-            return targetVisible && -1 <= targetOffset && targetOffset <= 1;
+            return false;
+            //return targetVisible && -1 <= targetOffset && targetOffset <= 1;
       }
 
       @Override
