@@ -2,9 +2,12 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -15,8 +18,7 @@ public class Aimbot extends Command {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
-            .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withSteerRequestType(SteerRequestType.Position);
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
 
     public final CommandSwerveDrivetrain drivetrain;
@@ -39,22 +41,20 @@ public class Aimbot extends Command {
     @Override
     public void execute() {
         xoffset = LimelightHelpers.getTX("limelight-three");
+        SmartDashboard.putNumber("X Offset", xoffset);
         if (!LimelightHelpers.getTV("limelight-three")) {
             return;
         }
-        sumError += xoffset * 0.02;
-        double kp = 0.1;
-        double ki = 0;
-        double kd = 0;
-        double power = Math.min(1, Math.max(-1, (kp * xoffset) + (ki * sumError) + (xoffset - previousError)/0.02 * kd));
+        PIDController pidController = new PIDController(0.05, 0, 0);
+        double power = Math.max(-1, Math.min(1, pidController.calculate(xoffset, 0)));
 
-        drivetrain.setControl(m_driveRequest.withRotationalRate(power * MaxAngularRate));
+        drivetrain.setControl(m_driveRequest.withRotationalRate(-power * MaxAngularRate));
         previousError = xoffset;
     }
 
     @Override
     public boolean isFinished() {
-        return -1 <= xoffset && xoffset <= 1;
+        return false /*-0.1 <= xoffset && xoffset <= 0.1*/;
     }
 
     @Override
