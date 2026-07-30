@@ -6,7 +6,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
@@ -24,7 +23,6 @@ public class Aimbot extends Command {
     public final CommandSwerveDrivetrain drivetrain;
 
     double xoffset;
-    double sumError;
     double previousError;
 
     public Aimbot(CommandSwerveDrivetrain drivetrain) {
@@ -34,7 +32,6 @@ public class Aimbot extends Command {
 
     @Override
     public void initialize() {
-        sumError = 0;
         previousError = 0;
     }
 
@@ -43,10 +40,12 @@ public class Aimbot extends Command {
         xoffset = LimelightHelpers.getTX("limelight-three");
         SmartDashboard.putNumber("X Offset", xoffset);
         if (!LimelightHelpers.getTV("limelight-three")) {
+            drivetrain.setControl(m_driveRequest.withRotationalRate(0));
             return;
         }
-        PIDController pidController = new PIDController(0.05, 0, 0);
-        double power = Math.max(-1, Math.min(1, pidController.calculate(xoffset, 0)));
+        double kp = 0.025;
+        double kd = 0.002;
+        double power = Math.min(1, Math.max(-1, (kp * xoffset) + (xoffset - previousError)/0.02 * kd));
 
         drivetrain.setControl(m_driveRequest.withRotationalRate(-power * MaxAngularRate));
         previousError = xoffset;
@@ -54,7 +53,7 @@ public class Aimbot extends Command {
 
     @Override
     public boolean isFinished() {
-        return false /*-0.1 <= xoffset && xoffset <= 0.1*/;
+        return false;
     }
 
     @Override
